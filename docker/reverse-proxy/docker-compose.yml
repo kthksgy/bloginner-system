@@ -1,0 +1,17 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:stable
+    restart: always
+    volumes:
+        - type: bind
+          source: "./nginx/content"
+          target: "/usr/share/nginx/html"
+        - type: bind
+          source: "./nginx/default.conf"
+          target: "/etc/nginx/conf.d/default.conf"
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+      - 7080:7080

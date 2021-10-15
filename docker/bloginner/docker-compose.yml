@@ -1,0 +1,41 @@
+version: '3'
+services:
+    spring:
+        image: adoptopenjdk/openjdk11:alpine-jre
+        restart: always
+        volumes:
+            - type: bind
+              source: "./spring"
+              target: "/spring"
+        ports:
+            - 8080:8080
+        working_dir: /spring
+        entrypoint:
+            - "java"
+            - "-jar"
+            - "-Dbloginner.title=ここにタイトルを入力"
+            - "bloginner.war"
+        environment:
+            spring.datasource.url: "jdbc:mysql://mysql/bloginner"
+            spring.datasource.username: "bloginner"
+        depends_on: 
+            - mysql
+    mysql:
+        image: mysql:8
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: example
+            MYSQL_DATABASE: bloginner
+            MYSQL_USER: bloginner
+            MYSQL_PASSWORD: bloginnerpassword
+        volumes:
+            - type: bind
+              source: "./mysql/conf"
+              target: "/etc/mysql/conf.d"
+            - type: bind
+              source: "./mysql/init"
+              target: "/docker-entrypoint-initdb.d"
+            - type: bind
+              source: "./mysql/data"
+              target: "/var/lib/mysql"
